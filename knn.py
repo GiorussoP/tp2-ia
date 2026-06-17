@@ -69,7 +69,7 @@ def main():
     #normalizando
     X_treino, X_teste = normalizacao(X_treino, X_teste)
     
-    valores_k = [2, 10, 50, 20]
+    valores_k = [2, 10, 50, 99]
     for k in valores_k:
         
         print(f"\n k = {k} ")
