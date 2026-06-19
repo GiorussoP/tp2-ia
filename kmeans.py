@@ -3,9 +3,9 @@ import pandas as pd
 
 
 # K-means, o algoritmo para quando nenhum ponto mudou de grupo
-def kmeans(k: int, df: pd.DataFrame, n_init: int = 10, max_iter: int = 3000):
+def kmeans(k: int, df: pd.DataFrame, n_init: int = 100, max_iter: int = 3000):
     if k <= 1:
-        raise ValueError("O número de clusters deve ser maior que um.")
+        return np.zeros(len(df), dtype=int), 0.0  # Todos no mesmo cluster, silhouette score zero
 
     X = df.values.astype(float)
     n_samples, n_features = X.shape
