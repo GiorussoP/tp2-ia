@@ -44,11 +44,13 @@ def normalizacao(df):
 
 
 
-def plot_kmeans_clusters(df, clusters, k, silhouette_score):
+def plot_kmeans_clusters(df, clusters, k, silhouette_score, centroids):
     pca = PCA(n_components=2)
     reduced_data = pca.fit_transform(df.values)
 
     scatter = plt.scatter(reduced_data[:, 0], reduced_data[:, 1], c=clusters, cmap='viridis')
+    reduced_centroids = pca.transform(centroids)
+    m_centroids = plt.scatter(reduced_centroids[:, 0], reduced_centroids[:, 1], c='red', marker='X', s=100, label='Centroides')
 
     plt.title(f'{k}-means Clusters (PCA), silhouette score: {silhouette_score:.2f}')
     plt.xlabel('Componente principal 1')
@@ -57,10 +59,13 @@ def plot_kmeans_clusters(df, clusters, k, silhouette_score):
     labels_legenda = [f'Grupo {i}' for i in range(k)]
     handles, _ = scatter.legend_elements()
 
+    handles.append(m_centroids)
+    labels_legenda.append('Centroides')
+
     plt.legend(handles, labels_legenda, title="Clusters Identificados")
+    
     plt.savefig(f'images/kmeans_clusters_k{k}.png', bbox_inches='tight', dpi=300)
     plt.show()
-     
      
 
 # 0 = Carreira durou menos de 5 anos, 1 = Carreira durou 5 anos ou mais, são os clusters anotados
@@ -148,12 +153,16 @@ def plot_accuracia_knn(df_metricas,valores_k):
     plt.savefig('images/evolucao_acuracia_knn.png', dpi=300, bbox_inches='tight')
     plt.show()
 
-def plot_sk_kmeans_clusters(df, clusters, k):
+def plot_sk_kmeans_clusters(df, clusters, k, centroids):
     pca = PCA(n_components=2)
     reduced_data = pca.fit_transform(df.values)
 
     plt.figure(figsize=(8, 6))
     scatter = plt.scatter(reduced_data[:, 0], reduced_data[:, 1], c=clusters, cmap='viridis')
+
+    reduced_centroids = pca.transform(centroids)
+    m_centroids = plt.scatter(reduced_centroids[:, 0], reduced_centroids[:, 1], 
+                              c='red', marker='X', s=100, label='Centroides')
 
     plt.title(f'Scikit-Learn {k}-means Clusters (PCA)')
     plt.xlabel('Componente principal 1')
@@ -161,6 +170,9 @@ def plot_sk_kmeans_clusters(df, clusters, k):
 
     labels_legenda = [f'Grupo {i}' for i in range(k)]
     handles, _ = scatter.legend_elements()
+
+    handles.append(m_centroids)
+    labels_legenda.append('Centroides')
 
     plt.legend(handles, labels_legenda, title="Clusters Scikit-Learn")
     plt.savefig(f'images/sk_kmeans_clusters_k{k}.png', bbox_inches='tight', dpi=300)

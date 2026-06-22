@@ -5,12 +5,14 @@ import pandas as pd
 # K-means, o algoritmo para quando nenhum ponto mudou de grupo
 def kmeans(k: int, df: pd.DataFrame, n_init: int = 100, max_iter: int = 3000):
     if k <= 1:
-        return np.zeros(len(df), dtype=int), 0.0  # Todos no mesmo cluster, silhouette score zero
+        # Todos no mesmo cluster, silhouette score zero. Centróide é o ponto médio
+        return np.zeros(len(df), dtype=int), 0.0, df.mean().values.reshape(1, -1)
 
     X = df.values.astype(float)
     n_samples, n_features = X.shape
 
     best_silhouette_score = -1
+    best_centroids = None
     best_labels = None
 
     # n_init diz quantas vezes o algoritmo irá sortear os clusters iniciais
@@ -69,5 +71,6 @@ def kmeans(k: int, df: pd.DataFrame, n_init: int = 100, max_iter: int = 3000):
         if current_silhouette > best_silhouette_score:
             best_silhouette_score = current_silhouette
             best_labels = labels.copy()
+            best_centroids = centroids.copy()
 
-    return best_labels, best_silhouette_score
+    return best_labels, best_silhouette_score, best_centroids

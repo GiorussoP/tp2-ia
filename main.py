@@ -99,29 +99,47 @@ df_kmeans_norm = util.normalizacao(df_kmeans)
 # Rodando pra k=2 e k=3
 for k in [2, 3]:
     # Rodando o algoritmo
-    clusters, silhouette_score = kmeans.kmeans(k, df_kmeans_norm)    
+    clusters, silhouette_score, centroids = kmeans.kmeans(k, df_kmeans_norm)
 
     # Plotando os clusters encontrados, com PCA para visualização
-    util.plot_kmeans_clusters(df_kmeans_norm, clusters, k, silhouette_score)
+    util.plot_kmeans_clusters(df_kmeans_norm, clusters, k, silhouette_score, centroids)
 
 # Rodando o K-means para vários k's diferentes e coletando os silhouette scores para comparação
 silhouette_scores = []
+centroids_list = []
 for k in range(1, 10):
-    clusters, silhouette_score = kmeans.kmeans(k, df_kmeans_norm)
+    clusters, silhouette_score, centroids = kmeans.kmeans(k, df_kmeans_norm)
     silhouette_scores.append(silhouette_score)
+    centroids_list.append(centroids)
+
+# Escrevendo os silhouette scores e centróides para cada k
+print("Silhouette Scores para diferentes valores de k:")
+for k, score in enumerate(silhouette_scores, start=1):
+    print(f"k={k}: Silhouette Score = {score:.4f}")
+
+for k, centroids in enumerate(centroids_list, start=1):
+    print(f"\nCentróides para k={k}:")
+    print(centroids)
+
 
 # Plotar silhouette scores
 util.plot_silhouette_scores(range(1, 10), silhouette_scores)
 
 # Plotando os clusters da melhor k encontrada
 melhor_k = np.argmax(silhouette_scores) + 1  # +1  porque começamos a contar de 1
-clusters, silhouette_score = kmeans.kmeans(melhor_k, df_kmeans_norm)
-util.plot_kmeans_clusters(df_kmeans_norm, clusters, melhor_k, silhouette_score)
+clusters, silhouette_score, centroids = kmeans.kmeans(melhor_k, df_kmeans_norm)
+util.plot_kmeans_clusters(df_kmeans_norm, clusters, melhor_k, silhouette_score, centroids)
 
 # Comparando com os rótulos reais
 util.plot_real_clusters(df_kmeans_norm, y_real)
 
-# Comparaando com o K-means do Scikit-Learn, usando o melhor k encontrado pelo nosso algoritmo
-sk_kmeans = SKKMeans(n_clusters=melhor_k, random_state=42, n_init=10)
+# Comparaando com o K-means do Scikit-Learn, usando 2 e 3 encontrado pelo nosso algoritmo
+sk_kmeans = SKKMeans(n_clusters=2, random_state=42, n_init=10)
 sk_clusters = sk_kmeans.fit_predict(df_kmeans_norm)
-util.plot_sk_kmeans_clusters(df_kmeans_norm, sk_clusters, melhor_k)
+sk_centroids = sk_kmeans.cluster_centers_
+util.plot_sk_kmeans_clusters(df_kmeans_norm, sk_clusters, 2, sk_centroids)
+
+sk_kmeans_3 = SKKMeans(n_clusters=3, random_state=42, n_init=10)
+sk_clusters_3 = sk_kmeans_3.fit_predict(df_kmeans_norm)
+sk_centroids_3 = sk_kmeans_3.cluster_centers_
+util.plot_sk_kmeans_clusters(df_kmeans_norm, sk_clusters_3, 3, sk_centroids_3)
