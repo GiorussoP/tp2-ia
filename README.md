@@ -13,7 +13,7 @@ Certifique-se de ter o **Python 3** instalado em sua máquina. Será necessário
 ### 2. Clonar o Repositório
 Abra o terminal e clone o projeto:
 ```bash
-git clone [https://github.com/GiorussoP/tp2-ia.git](https://github.com/GiorussoP/tp2-ia.git)
+git clone https://github.com/GiorussoP/tp2-ia.git
 cd tp2-ia
 ```
 
